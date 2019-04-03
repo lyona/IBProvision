@@ -1,0 +1,108 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "artifactsBaseUrl": {
+            "value": "https://mprpdfartifactstore.azureedge.net/publicartifacts/infoblox.infoblox-nios-for-947c714a-2230-4801-8ec1-c14834b9e620-vnios/Artifacts"
+        },
+        "location": {
+            "value": "ukwest"
+        },
+        "vmName": {
+            "value": "infoxblox"
+        },
+        "vmSize": {
+            "value": "Standard_DS2_v2"
+        },
+        "niosModel": {
+            "value": "vnios-te-v820"
+        },
+        "niosVersion": {
+            "value": "810.352813.0"
+        },
+        "adminPassword": {
+            "value": null
+        },
+        "virtualNetworkName": {
+            "value": "infobloxtest"
+        },
+        "virtualNetworkExistingRGName": {
+            "value": "infobloxtest"
+        },
+        "virtualNetworkAddressPrefix": {
+            "value": "10.0.0.0/16"
+        },
+        "vnetNewOrExisting": {
+            "value": "new"
+        },
+        "subnet1Name": {
+            "value": "lan1"
+        },
+        "subnet1Prefix": {
+            "value": "10.0.0.0/24"
+        },
+        "subnet1StartAddress": {
+            "value": "10.0.0.4"
+        },
+        "subnet2Name": {
+            "value": "mgmt"
+        },
+        "subnet2Prefix": {
+            "value": "10.0.1.0/24"
+        },
+        "subnet2StartAddress": {
+            "value": "10.0.1.4"
+        },
+        "newStorageAccountName": {
+            "value": "lyonblox"
+        },
+        "storageAccountType": {
+            "value": "Premium_LRS"
+        },
+        "storageAccountNewOrExisting": {
+            "value": "new"
+        },
+        "storageAccountExistingRG": {
+            "value": "infobloxtest"
+        },
+        "newStorageAccountForLogsName": {
+            "value": "lyonbloxbootdiag"
+        },
+        "storageAccountForLogsType": {
+            "value": "Standard_LRS"
+        },
+        "storageAccountForLogsNewOrExisting": {
+            "value": "new"
+        },
+        "storageAccountForLogsNeedFix": {
+            "value": false
+        },
+        "storageAccountForLogsExistingRG": {
+            "value": "infobloxtest"
+        },
+        "publicIPAddressName": {
+            "value": "infobloxpip"
+        },
+        "publicIPDnsName": {
+            "value": "lyoninfoblox"
+        },
+        "publicIPNewOrExistingOrNone": {
+            "value": "new"
+        },
+        "publicIPExistingRGName": {
+            "value": "infobloxtest"
+        },
+        "availabilitySetNewOrExistingOrNone": {
+            "value": "none"
+        },
+        "availabilitySetName": {
+            "value": ""
+        },
+        "customData": {
+            "value": ""
+        },
+        "tempLicenseOption": {
+            "value": "TE"
+        }
+    }
+}
