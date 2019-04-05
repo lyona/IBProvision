@@ -53,31 +53,16 @@
         "subnet2StartAddress": {
             "value": "10.0.1.4"
         },
-        "newStorageAccountName": {
+        "storageAccountName": {
             "value": "lyonblox"
         },
-        "storageAccountType": {
-            "value": "Premium_LRS"
-        },
-        "storageAccountNewOrExisting": {
-            "value": "new"
-        },
-        "storageAccountExistingRG": {
+        "storageAccountRG": {
             "value": "infobloxtest"
         },
-        "newStorageAccountForLogsName": {
+        "storageAccountLogsName": {
             "value": "lyonbloxbootdiag"
         },
-        "storageAccountForLogsType": {
-            "value": "Standard_LRS"
-        },
-        "storageAccountForLogsNewOrExisting": {
-            "value": "new"
-        },
-        "storageAccountForLogsNeedFix": {
-            "value": false
-        },
-        "storageAccountForLogsExistingRG": {
+        "storageAccountLogsRG": {
             "value": "infobloxtest"
         },
         "publicIPAddressName": {
@@ -85,9 +70,6 @@
         },
         "publicIPDnsName": {
             "value": "lyoninfoblox"
-        },
-        "publicIPNewOrExistingOrNone": {
-            "value": "new"
         },
         "publicIPExistingRGName": {
             "value": "infobloxtest"
