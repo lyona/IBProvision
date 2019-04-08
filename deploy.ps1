@@ -5,15 +5,20 @@ $ClientSecret = "D+UQxx1EW9LAgStiB5meOoQihnHmmH1vKreX1SRtcpQ="
 $SubscriptionId = "312baddd-ddd0-48fd-812a-c9571f7f86cb"
 $TenantId = "229365ac-76e3-4cbb-b87e-729538eb5fb4"
 
-<# $ClientSecret = ConvertTo-SecureString $clientSecret -AsPlainText -Force
+$ClientSecret = ConvertTo-SecureString $clientSecret -AsPlainText -Force
 $ClientCredential = New-Object System.Management.Automation.PSCredential($ClientId, $clientSecret)
 
+##################################################
 Login-AzAccount -ServicePrincipal -Credential $ClientCredential -Tenant $TenantId -WarningAction SilentlyContinue | Out-Null
 Select-AzSubscription -SubscriptionName $subscriptionId | Out-Null
 
-New-AzResourceGroupDeployment -Name infobloxTest -ResourceGroupName "AlexLyonInfoblox" `
-    -Mode Incremental -TemplateFile "./templates/infoblox.json" #>
+New-AzResourceGroupDeployment -Name infobloxTest `
+    -ResourceGroupName "AlexLyonInfoblox" `
+    -Mode Incremental `
+    -TemplateFile "./templates/infoblox.json" `
+    -TemplateParameterFile "./templates/parameters.json"
 
+################################################# 
 az login --service-principal -u $ClientId -p $ClientSecret --tenant $TenantId 
 az account set --subscription $SubscriptionId
 

@@ -13,19 +13,15 @@ resource "azurerm_template_deployment" "infoblox" {
     adminPassword                = "${var.adminPassword}"
     virtualNetworkName           = "${var.virtualNetworkName}"
     virtualNetworkExistingRGName = "${var.virtualNetworkExistingRGName}"
-    virtualNetworkAddressPrefix  = "${var.virtualNetworkAddressPrefix}"
     subnet1Name                  = "${var.subnet1Name}"
-    subnet1Prefix                = "${var.subnet1Prefix}"
     subnet1StartAddress          = "${var.subnet1StartAddress}"
     subnet2Name                  = "${var.subnet2Name}"
-    subnet2Prefix                = "${var.subnet2Prefix}"
     subnet2StartAddress          = "${var.subnet2StartAddress}"
     storageAccountName           = "${var.storageAccountName}"
-
-    # storageAccountRG             = "${var.storageAccountRG}"
-    storageAccountLogsName = "${var.storageAccountLogsName}"
-
-    # storageAccountLogsRG         = "${var.storageAccountLogsRG}"
-    tempLicenseOption = "${var.tempLicenseOption}"
+    storageAccountLogsName       = "${var.storageAccountLogsName}"
+    tempLicenseOption            = "${var.tempLicenseOption}"
+    publicIPExistingRGName       = "${var.publicIPExistingRGName}"
+    publicIPAddressName          = "${var.publicIPAddressName}"
+    nsgName                      = "${var.nsgName}"
   }
 }

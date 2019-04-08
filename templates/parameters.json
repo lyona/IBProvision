@@ -6,10 +6,10 @@
             "value": "https://mprpdfartifactstore.azureedge.net/publicartifacts/infoblox.infoblox-nios-for-947c714a-2230-4801-8ec1-c14834b9e620-vnios/Artifacts"
         },
         "location": {
-            "value": "ukwest"
+            "value": "uksouth"
         },
         "vmName": {
-            "value": "infoxblox"
+            "value": "infoxbloxTempVm"
         },
         "vmSize": {
             "value": "Standard_DS2_v2"
@@ -21,70 +21,43 @@
             "value": "810.352813.0"
         },
         "adminPassword": {
-            "value": null
+            "value": "adminPassword1"
         },
         "virtualNetworkName": {
-            "value": "infobloxtest"
+            "value": "infobloxvnet"
         },
         "virtualNetworkExistingRGName": {
-            "value": "infobloxtest"
-        },
-        "virtualNetworkAddressPrefix": {
-            "value": "10.0.0.0/16"
-        },
-        "vnetNewOrExisting": {
-            "value": "new"
+            "value": "AlexLyonInfoblox"
         },
         "subnet1Name": {
-            "value": "lan1"
-        },
-        "subnet1Prefix": {
-            "value": "10.0.0.0/24"
+            "value": "lan"
         },
         "subnet1StartAddress": {
-            "value": "10.0.0.4"
+            "value": "10.1.0.4"
         },
         "subnet2Name": {
             "value": "mgmt"
         },
-        "subnet2Prefix": {
-            "value": "10.0.1.0/24"
-        },
         "subnet2StartAddress": {
-            "value": "10.0.1.4"
+            "value": "10.1.1.4"
         },
         "storageAccountName": {
-            "value": "lyonblox"
-        },
-        "storageAccountRG": {
-            "value": "infobloxtest"
+            "value": "alexlyoninfoblox"
         },
         "storageAccountLogsName": {
             "value": "lyonbloxbootdiag"
         },
-        "storageAccountLogsRG": {
-            "value": "infobloxtest"
-        },
-        "publicIPAddressName": {
-            "value": "infobloxpip"
-        },
-        "publicIPDnsName": {
-            "value": "lyoninfoblox"
-        },
-        "publicIPExistingRGName": {
-            "value": "infobloxtest"
-        },
-        "availabilitySetNewOrExistingOrNone": {
-            "value": "none"
-        },
-        "availabilitySetName": {
-            "value": ""
-        },
-        "customData": {
-            "value": ""
-        },
         "tempLicenseOption": {
             "value": "TE"
+        },
+        "publicIPAddressName": {
+            "value": "infobloxtestpip"
+        },
+        "publicIPExistingRGName": {
+            "value": "AlexLyonInfoblox"
+        },
+        "nsgName": {
+            "value": "infoblox-nsg"
         }
     }
 }

@@ -92,15 +92,7 @@ variable "virtualNetworkExistingRGName" {
   type = "string"
 }
 
-variable "virtualNetworkAddressPrefix" {
-  type = "string"
-}
-
 variable "subnet1Name" {
-  type = "string"
-}
-
-variable "subnet1Prefix" {
   type = "string"
 }
 
@@ -112,10 +104,6 @@ variable "subnet2Name" {
   type = "string"
 }
 
-variable "subnet2Prefix" {
-  type = "string"
-}
-
 variable "subnet2StartAddress" {
   type = "string"
 }
@@ -124,18 +112,22 @@ variable "storageAccountName" {
   type = "string"
 }
 
-variable "storageAccountRG" {
-  type = "string"
-}
-
 variable "storageAccountLogsName" {
   type = "string"
 }
 
-variable "storageAccountLogsRG" {
+variable "tempLicenseOption" {
   type = "string"
 }
 
-variable "tempLicenseOption" {
+variable "publicIPExistingRGName" {
+  type = "string"
+}
+
+variable "publicIPAddressName" {
+  type = "string"
+}
+
+variable "nsgName" {
   type = "string"
 }
