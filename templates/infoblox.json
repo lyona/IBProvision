@@ -188,6 +188,12 @@
             "metadata": {
                 "description": "Temporary license option."
             }
+        },
+        "storageAccountLogsName": {
+            "type": "string"
+        },
+        "storageAccountName": {
+            "type": "string"
         }
     },
     "variables": {
@@ -216,6 +222,8 @@
         "availabilitySetNewOrNone": "[replace(parameters('availabilitySetNewOrExistingOrNone'), 'existing', 'none')]",
         "availabilitySetExistingOrNone": "[replace(parameters('availabilitySetNewOrExistingOrNone'), 'new', 'existing')]",
         "availabilitySetSetupURL": "[concat(parameters('artifactsBaseUrl'),'/availabilityset-',variables('availabilitySetNewOrNone'),'.json')]",
+        "storageAccountUri": "[concat('https://', parameters('storageAccountName'),'.blob.core.windows.net/')]",
+        "storageAccountLogsUri": "[concat('https://', parameters('storageAccountLogsName'),'.blob.core.windows.net/')]",
         "sq": "'",
         "osProfile": {
             "computerName": "[parameters('vmName')]",
@@ -288,7 +296,7 @@
             },
             "dependsOn": []
         },
-        {
+        /*      {
             "type": "Microsoft.Resources/deployments",
             "name": "SettingUpPublicIP",
             "apiVersion": "[variables('apiVersion')]",
@@ -316,7 +324,7 @@
                     }
                 }
             }
-        },
+        }, */
         {
             "type": "Microsoft.Resources/deployments",
             "name": "SettingUpAvailabilitySet",
@@ -380,7 +388,7 @@
                             "osDisk": {
                                 "name": "[variables('OSDiskName')]",
                                 "vhd": {
-                                    "uri": "[concat(reference('SettingUpStorageAccount').outputs.endpointURL.value, variables('vmStorageAccountContainerName'), '/', variables('OSDiskName'), '.vhd')]"
+                                    "uri": "[concat(variables('storageAccountUri'), variables('vmStorageAccountContainerName'), '/', variables('OSDiskName'), '.vhd')]"
                                 },
                                 "caching": "ReadOnly",
                                 "createOption": "FromImage"
@@ -409,7 +417,7 @@
                         "value": {
                             "bootDiagnostics": {
                                 "enabled": "true",
-                                "storageUri": "[reference('SettingUpStorageAccountForLogs').outputs.endpointURL.value]"
+                                "storageUri": "[variables('storageAccountUri')]"
                             }
                         }
                     },
