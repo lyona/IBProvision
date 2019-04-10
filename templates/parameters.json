@@ -2,9 +2,6 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "artifactsBaseUrl": {
-            "value": "https://mprpdfartifactstore.azureedge.net/publicartifacts/infoblox.infoblox-nios-for-947c714a-2230-4801-8ec1-c14834b9e620-vnios/Artifacts"
-        },
         "location": {
             "value": "uksouth"
         },
@@ -45,7 +42,7 @@
             "value": "alexlyoninfoblox"
         },
         "storageAccountLogsName": {
-            "value": "lyonbloxbootdiag"
+            "value": "alexlyoninfobloxlogs"
         },
         "tempLicenseOption": {
             "value": "TE"

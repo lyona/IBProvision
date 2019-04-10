@@ -11,12 +11,30 @@ $ClientCredential = New-Object System.Management.Automation.PSCredential($Client
 ##################################################
 Login-AzAccount -ServicePrincipal -Credential $ClientCredential -Tenant $TenantId -WarningAction SilentlyContinue | Out-Null
 Select-AzSubscription -SubscriptionName $subscriptionId | Out-Null
+Get-AzMarketplaceTerms -Publisher "infoblox" -Product "infoblox-vnios-te-v1420" -Name "vnios-te-v820" | Set-AzMarketplaceTerms -Accept
+
+$resourceGroup = "AlexLyonInfoblox"
+$vmName = "infoxbloxTempVm"
+$storageAccountName = "alexlyoninfoblox"
 
 New-AzResourceGroupDeployment -Name infobloxTest `
-    -ResourceGroupName "AlexLyonInfoblox" `
+    -ResourceGroupName $resourceGroup `
     -Mode Incremental `
     -TemplateFile "./templates/infoblox.json" `
     -TemplateParameterFile "./templates/parameters.json"
+
+
+
+Remove-AzVM -ResourceGroupName $resourceGroup -Name $vmName -Force
+Remove-AzAvailabilitySet -ResourceGroupName $resourceGroup -Name "$vmName-AS" -Force
+Remove-AzNetworkInterface -ResourceGroupName $resourceGroup -Name "$vmName-lan" -Force
+Remove-AzNetworkInterface -ResourceGroupName $resourceGroup -Name "$vmName-mgmt" -Force
+$storageKey = Get-AzStorageAccountKey -ResourceGroupName $resourceGroup -Name $storageAccountName -ErrorAction Stop | Where-Object { $_.KeyName -eq "key1" } | Select-Object -ExpandProperty Value
+$storageContext = New-AzStorageContext -StorageAccountName $storageAccountName -StorageAccountKey $storageKey
+Get-AzStorageBlob -Container "disks" -Context $storageContext | Where-Object { $_.Name -like 'infoxbloxTempVm*.vhd' } | Remove-AzStorageBlob
+
+
+
 
 ################################################# 
 az login --service-principal -u $ClientId -p $ClientSecret --tenant $TenantId 

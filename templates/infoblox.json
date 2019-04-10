@@ -2,14 +2,6 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "artifactsBaseUrl": {
-            "defaultValue": "https://mprpdfartifactstore.azureedge.net/publicartifacts/infoblox.infoblox-nios-for-947c714a-2230-4801-8ec1-c14834b9e620-vnios/Artifacts",
-            "type": "string",
-            "metadata": {
-                "description": "The base URL for dependent assets",
-                "artifactsBaseUrl": ""
-            }
-        },
         "location": {
             "defaultValue": "[ResourceGroup().Location]",
             "type": "string",
@@ -155,13 +147,6 @@
                 "description": "Indicates whether the availability Set IP is new, none or existing"
             }
         },
-        "availabilitySetName": {
-            "defaultValue": "",
-            "type": "string",
-            "metadata": {
-                "description": "availability set name"
-            }
-        },
         "customData": {
             "defaultValue": "",
             "type": "string",
@@ -211,199 +196,140 @@
         "subnet1ResourceId": "[concat(variables('vnetResourceId'),'/subnets/',parameters('subnet1Name'))]",
         "subnet2ResourceId": "[concat(variables('vnetResourceId'),'/subnets/',parameters('subnet2Name'))]",
         "nsgName": "[parameters('nsgName')]",
-        // "nsgId": "[resourceId(parameters('virtualNetworkExistingRGName'),'providers/Microsoft.Network/networkSecurityGroups',variables('nsgName'))]",
-        "nsgId": "/subscriptions/312baddd-ddd0-48fd-812a-c9571f7f86cb/resourceGroups/AlexLyonInfoblox/providers/Microsoft.Network/networkSecurityGroups/infoblox-nsg",
+        "nsgId": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgName'))]",
+        //"nsgId": "[resourceId(parameters('virtualNetworkExistingRGName'),'providers/Microsoft.Network/networkSecurityGroups',variables('nsgName'))]",
+        //"nsgId": "/subscriptions/312baddd-ddd0-48fd-812a-c9571f7f86cb/resourceGroups/AlexLyonInfoblox/providers/Microsoft.Network/networkSecurityGroups/infoblox-nsg",
         "nicPrimaryName": "[concat(parameters('vmName'),'-lan')]",
         "nicSecondaryName": "[concat(parameters('vmName'),'-mgmt')]",
-        "publicIPExistingOrNone": "existing",
         "publicIpResourceId": "[resourceId(parameters('publicIPExistingRGName'),concat('Microsoft.Network','/','publicIPAddresses'),parameters('publicIPAddressName'))]",
-        "apiVersion": "2016-06-01",
-        "publicIPAddressType": "Dynamic",
-        "publicIPSetupURL": "[concat(parameters('artifactsBaseUrl'),'/publicip-',parameters('publicIPNewOrExistingOrNone'),'.json')]",
-        "nicPrimarySetupURL": "[concat(parameters('artifactsBaseUrl'),'/nic-pip',variables('publicIPExistingOrNone'),'.json')]",
-        "nicSecondarySetupURL": "[concat(parameters('artifactsBaseUrl'),'/nic-pipnone.json')]",
         "customData": "[base64(concat('temp_license: ', variables('tempLicense'), '\n', 'default_admin_password: ', variables('sq'), replace(parameters('adminPassword'), variables('sq'), concat(variables('sq'), variables('sq'))), variables('sq'), '\n', parameters('customData')))]",
-        "availabilitySetNewOrNone": "[replace(parameters('availabilitySetNewOrExistingOrNone'), 'existing', 'none')]",
-        "availabilitySetExistingOrNone": "[replace(parameters('availabilitySetNewOrExistingOrNone'), 'new', 'existing')]",
-        "availabilitySetSetupURL": "[concat(parameters('artifactsBaseUrl'),'/availabilityset-',variables('availabilitySetNewOrNone'),'.json')]",
+        "availabilitySetName": "[concat(parameters('vmName'),'-AS')]",
         "storageAccountUri": "[concat('https://', parameters('storageAccountName'),'.blob.core.windows.net/')]",
         "storageAccountLogsUri": "[concat('https://', parameters('storageAccountLogsName'),'.blob.core.windows.net/')]",
         "sq": "'",
-        "osProfile": {
-            "computerName": "[parameters('vmName')]",
-            "adminUsername": "[uniqueString(ResourceGroup().Id)]",
-            "adminPassword": "[parameters('adminPassword')]",
-            "customData": "[variables('customData')]"
-        },
-        "virtualMachineSetURL": "[concat(parameters('artifactsBaseUrl'),'/vm-availabilityset-', variables('availabilitySetExistingOrNone'),'.json')]"
     },
     "resources": [
         {
-            "type": "Microsoft.Resources/deployments",
-            "name": "SettingUpPrimaryNic",
-            "apiVersion": "[variables('apiVersion')]",
+            "apiVersion": "2016-03-30",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[variables('nicPrimaryName')]",
+            "location": "[parameters('location')]",
             "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('nicPrimarySetupURL')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "location": {
-                        "value": "[parameters('location')]"
-                    },
-                    "nicName": {
-                        "value": "[variables('nicPrimaryName')]"
-                    },
-                    "IPAddress": {
-                        "value": "[parameters('subnet1StartAddress')]"
-                    },
-                    "subnetId": {
-                        "value": "[variables('subnet1ResourceId')]"
-                    },
-                    "publicIPAddressId": {
-                        "value": "[variables('publicIpResourceId')]"
-                    },
-                    "networkSecurityGroupId": {
-                        "value": "[variables('nsgId')]"
-                    }
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Resources/deployments",
-            "name": "SettingUpSecondaryNic",
-            "apiVersion": "[variables('apiVersion')]",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('nicSecondarySetupURL')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "location": {
-                        "value": "[parameters('location')]"
-                    },
-                    "nicName": {
-                        "value": "[variables('nicSecondaryName')]"
-                    },
-                    "IPAddress": {
-                        "value": "[parameters('subnet2StartAddress')]"
-                    },
-                    "subnetId": {
-                        "value": "[variables('subnet2ResourceId')]"
-                    }
-                }
-            },
-            "dependsOn": []
-        },
-        {
-            "type": "Microsoft.Resources/deployments",
-            "name": "SettingUpAvailabilitySet",
-            "apiVersion": "[variables('apiVersion')]",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('availabilitySetSetupURL')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "location": {
-                        "value": "[parameters('location')]"
-                    },
-                    "availabilitySetName": {
-                        "value": "[parameters('availabilitySetName')]"
-                    }
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Resources/deployments",
-            "name": "SettingUpVirtualMachine",
-            "apiVersion": "[variables('apiVersion')]",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('virtualMachineSetURL')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "vmName": {
-                        "value": "[parameters('vmName')]"
-                    },
-                    "location": {
-                        "value": "[parameters('location')]"
-                    },
-                    "plan": {
-                        "value": {
-                            "publisher": "[variables('imagePublisher')]",
-                            "product": "[variables('imageOffer')]",
-                            "name": "[variables('imageSKU')]"
-                        }
-                    },
-                    "hardwareProfile": {
-                        "value": {
-                            "vmSize": "[parameters('vmSize')]"
-                        }
-                    },
-                    "osProfile": {
-                        "value": "[variables('osProfile')]"
-                    },
-                    "storageProfile": {
-                        "value": {
-                            "imageReference": {
-                                "publisher": "[variables('imagePublisher')]",
-                                "offer": "[variables('imageOffer')]",
-                                "sku": "[variables('imageSKU')]",
-                                "version": "[variables('version')]"
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[parameters('subnet1StartAddress')]",
+                            "subnet": {
+                                "id": "[variables('subnet1ResourceId')]"
                             },
-                            "osDisk": {
-                                "name": "[variables('OSDiskName')]",
-                                "vhd": {
-                                    "uri": "[concat(variables('storageAccountUri'), variables('vmStorageAccountContainerName'), '/', variables('OSDiskName'), '.vhd')]"
-                                },
-                                "caching": "ReadOnly",
-                                "createOption": "FromImage"
+                            "publicIPAddress": {
+                                "id": "[variables('publicIpResourceId')]"
                             }
-                        }
-                    },
-                    "networkProfile": {
-                        "value": {
-                            "networkInterfaces": [
-                                {
-                                    "id": "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicPrimaryName'))]",
-                                    "properties": {
-                                        "primary": true
-                                    }
-                                },
-                                {
-                                    "id": "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicSecondaryName'))]",
-                                    "properties": {
-                                        "primary": false
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "diagnosticsProfile": {
-                        "value": {
-                            "bootDiagnostics": {
-                                "enabled": "true",
-                                "storageUri": "[variables('storageAccountUri')]"
-                            }
-                        }
-                    },
-                    "availabilitySet": {
-                        "value": {
-                            "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySetName'))]"
                         }
                     }
-                }
+                ],
+                "networkSecurityGroup": {
+                    "id": "[variables('nsgId')]"
+                },
+                "enableIPForwarding": true
+            }
+        },
+        {
+            "apiVersion": "2016-03-30",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[variables('nicSecondaryName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[parameters('subnet2StartAddress')]",
+                            "subnet": {
+                                "id": "[variables('subnet2ResourceId')]"
+                            }
+                        }
+                    }
+                ],
+                "enableIPForwarding": true
+            }
+        },
+        {
+            "apiVersion": "2018-10-01",
+            "type": "Microsoft.Compute/availabilitySets",
+            "name": "[variables('availabilitySetName')]",
+            "location": "[parameters('location')]",
+            "properties": {}
+        },
+        {
+            "apiVersion": "2018-10-01",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('vmName')]",
+            "location": "[parameters('location')]",
+            "plan": {
+                "name": "[variables('imageSKU')]",
+                "publisher": "[variables('imagePublisher')]",
+                "product": "[variables('imageOffer')]"
+            },
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('vmSize')]"
+                },
+                "osProfile": {
+                    "computerName": "[parameters('vmName')]",
+                    "adminUsername": "[uniqueString(ResourceGroup().Id)]",
+                    "adminPassword": "[parameters('adminPassword')]",
+                    "customData": "[variables('customData')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('imagePublisher')]",
+                        "offer": "[variables('imageOffer')]",
+                        "sku": "[variables('imageSKU')]",
+                        "version": "[variables('version')]"
+                    },
+                    "osDisk": {
+                        "name": "[variables('OSDiskName')]",
+                        "vhd": {
+                            "uri": "[concat(variables('storageAccountUri'), variables('vmStorageAccountContainerName'), '/', variables('OSDiskName'), '.vhd')]"
+                        },
+                        "caching": "ReadOnly",
+                        "createOption": "FromImage"
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicPrimaryName'))]",
+                            "properties": {
+                                "primary": true
+                            }
+                        },
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicSecondaryName'))]",
+                            "properties": {
+                                "primary": false
+                            }
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[variables('storageAccountLogsUri')]"
+                    }
+                },
+                /*      "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
+                } */
             },
             "dependsOn": [
-                "[concat('Microsoft.Resources/deployments/', 'SettingUpPrimaryNic')]",
-                "[concat('Microsoft.Resources/deployments/', 'SettingUpSecondaryNic')]",
-                "[concat('Microsoft.Resources/deployments/', 'SettingUpAvailabilitySet')]"
+                "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicPrimaryName'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicSecondaryName'))]",
+                "[resourceId('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]"
             ]
         }
     ]
