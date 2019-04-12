@@ -15,7 +15,7 @@
             "value": "vnios-te-v820"
         },
         "niosVersion": {
-            "value": "810.352813.0"
+            "value": "latest"
         },
         "adminPassword": {
             "value": "adminPassword1"
