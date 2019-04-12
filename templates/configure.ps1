@@ -32,9 +32,18 @@ curl -k1 -u admin:adminPassword1 -X GET "https://alexlyoninfoblox.uksouth.clouda
 # create fwd authoritive zone
 curl -k -u admin:adminPassword1 -H "Content-Type: application/json" -X POST https://alexlyoninfoblox.uksouth.cloudapp.azure.com/wapi/v2.6/zone_auth -d '{\"fqdn\": \"authforward\"}'
 
+# create rev authoritive zone
+curl -k -u admin:adminPassword1 -H "Content-Type: application/json" -X POST "https://alexlyoninfoblox.uksouth.cloudapp.azure.com/wapi/v2.6/zone_auth?_return_fields%2B=fqdn&_return_as_object=1" -d '{\"fqdn\":\"0.1.10.in-addr.arpa\",\"zone_format\":\"IPV4\"}'
+
 # modify zone to add NS
-$zoneRef = (curl -k1 -u admin:adminPassword1 "$apiUrl/zone_auth" -X GET | ConvertFrom-Json)._ref
-curl -k -u admin:adminPassword1 -H "Content-Type: application/json" -X PUT "$($apiUrl)/$($zoneRef)?_return_fields%2B=fqdn,grid_primary&_return_as_object=1" -d '{\"grid_primary\":[{\"name\":\"infoblox.localdomain\"}]}'
+$fwdZoneRef = ((curl -k1 -u admin:adminPassword1 "$apiUrl/zone_auth" -X GET | ConvertFrom-Json) | Where-Object { $_.fqdn -eq 'authforward' })._ref
+curl -k -u admin:adminPassword1 -H "Content-Type: application/json" -X PUT "$($apiUrl)/$($fwdZoneRef)?_return_fields%2B=fqdn,grid_primary&_return_as_object=1" -d '{\"grid_primary\":[{\"name\":\"infoblox.localdomain\"}]}'
+$revZoneRef = ((curl -k1 -u admin:adminPassword1 "$apiUrl/zone_auth" -X GET | ConvertFrom-Json) | Where-Object { $_.fqdn -eq '10.1.0.0/24' })._ref
+curl -k -u admin:adminPassword1 -H "Content-Type: application/json" -X PUT "$($apiUrl)/$($revZoneRef)?_return_fields%2B=fqdn,grid_primary&_return_as_object=1" -d '{\"grid_primary\":[{\"name\":\"infoblox.localdomain\"}]}'
+
+
+
+
 
 # restart services
 curl -k -u admin:adminPassword1 -H "Content-Type: application/json" -X POST https://alexlyoninfoblox.uksouth.cloudapp.azure.com/wapi/v2.6/$($gridRef)?_function=requestrestartservicestatus -d '{\"service_option\": \"ALL | DHCP | DNS\"}'
